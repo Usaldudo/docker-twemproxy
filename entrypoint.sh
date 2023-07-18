@@ -30,6 +30,10 @@ EOF
         echo "   - ${sentinel_server}" >> $CONFIG_PATH
       done
     fi
+
+    if [ -n "$REDIS_AUTH" ]; then
+      echo "  redis_auth: ${REDIS_AUTH}"
+    fi
 }
 
 
