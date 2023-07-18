@@ -20,6 +20,9 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+        token: ${{ secrets.TOKEN }}
 
     - uses: actions/setup-node@v3
       with:
@@ -31,10 +34,11 @@ jobs:
       id: changelog
       uses: TriPSs/conventional-changelog-action@v3
       with:
-        github-token: ${{ secrets.github_token }}
+        github-token: ${{ secrets.TOKEN }}
         create-summary: true
         skip-version-file: true
         output-file: "false"
+        skip-commit: "true"
         tag-prefix: ''
         fallback-version: ${{ inputs.fallback-version }}
         skip-ci: false
@@ -44,7 +48,7 @@ jobs:
       uses: softprops/action-gh-release@v1
       if: ${{ steps.changelog.outputs.skipped == 'false' }}
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.TOKEN }}
       with:
         tag_name: ${{ steps.changelog.outputs.tag }}
         name: ${{ steps.changelog.outputs.tag }}

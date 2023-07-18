@@ -28,7 +28,7 @@ Just provide a list of Redis servers as ENV.
 i.e. if you want to redirect to three Redis instances, create this custom Dockerfile:
 
 ```dockerfile
-FROM ghcr.io/usaldudo/tweamproxy:0.5.1
+FROM ghcr.io/usaldudo/docker-twemproxy :0.5.1
 
 ENV REDIS_SERVERS 127.0.1.1:6379:1,127.0.1.2:6379:1,127.0.1.3:6379:1
 ```
@@ -56,7 +56,7 @@ pool:
 if you want to use sentinel, use `REDIS_SENTINEL_SERVERS` variable :
 
 ```dockerfile
-FROM ghcr.io/usaldudo/tweamproxy:0.5.1
+FROM ghcr.io/usaldudo/docker-twemproxy :0.5.1
 
 ENV REDIS_SERVERS "127.0.1.1:6379:1 server1,127.0.1.2:6379:1 server2,127.0.1.3:6379:1 server3"
 ENV REDIS_SENTINEL_SERVERS "127.0.0.1:26379:1,127.0.0.1:26380:1,127.0.0.1:26381:1"

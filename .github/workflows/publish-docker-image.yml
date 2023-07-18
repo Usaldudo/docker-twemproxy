@@ -3,7 +3,7 @@ name: Create and publish a Docker image
 on:
   push:
     tags:
-      - "*"
+      - '*'
 
 env:
   REGISTRY: ghcr.io
@@ -15,6 +15,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
 
     steps:
       - name: Checkout repository
@@ -34,13 +35,13 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Read Image Identifiers
-        run: echo IMAGE_NAME=$(echo "${{ github.actor }}/${{ env.IMAGE_NAME }}" | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
+        run: echo IMAGE_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]') >> $GITHUB_ENV
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: ${{ env.REGISTRY }}/${IMAGE_NAME}
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           labels: |
             maintainer=${{ github.actor }}
 
@@ -56,5 +57,5 @@ jobs:
       - name: Sign the images with GitHub OIDC Token
         env:
           DIGEST: ${{ steps.build-and-push.outputs.digest }}
-          TAGS: ${{ steps.meta.outputs.tags }}
+          TAGS: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
         run: cosign sign --yes "${TAGS}@${DIGEST}"
