@@ -23,6 +23,13 @@ EOF
     for server in $REDIS_SERVERS; do
       echo "   - ${server}" >> $CONFIG_PATH
     done
+
+    if [ -n "$REDIS_SENTINEL_SERVERS" ]; then
+      echo "  sentinels:" >> $CONFIG_PATH
+      for sentinel_server in $REDIS_SENTINEL_SERVERS; do
+        echo "   - ${sentinel_server}" >> $CONFIG_PATH
+      done
+    fi
 }
 
 

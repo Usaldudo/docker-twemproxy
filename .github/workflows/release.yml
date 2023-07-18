@@ -1,0 +1,51 @@
+name: Create release
+
+on:
+  workflow_dispatch:
+    inputs:
+      fallback-version:
+        description: 'The fallback version, if no older one can be detected, or if it is the first one'
+        type: string
+        required: false
+        default: "0.1.0"
+      pre-release:
+        description: "Marks the release as pre-release"
+        type: boolean
+        required: false
+        default: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - uses: actions/setup-node@v3
+      with:
+        node-version: 16
+
+    - run: npm install conventional-changelog-conventionalcommits
+
+    - name: Conventional Changelog Action
+      id: changelog
+      uses: TriPSs/conventional-changelog-action@v3
+      with:
+        github-token: ${{ secrets.github_token }}
+        create-summary: true
+        skip-version-file: true
+        output-file: "false"
+        tag-prefix: ''
+        fallback-version: ${{ inputs.fallback-version }}
+        skip-ci: false
+        pre-release: ${{ inputs.pre-release }}
+
+    - name: Create Release
+      uses: softprops/action-gh-release@v1
+      if: ${{ steps.changelog.outputs.skipped == 'false' }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ steps.changelog.outputs.tag }}
+        name: ${{ steps.changelog.outputs.tag }}
+        body: ${{ steps.changelog.outputs.clean_changelog }}
